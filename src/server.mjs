@@ -1,13 +1,27 @@
 import Hapi from '@hapi/hapi';
-import routes from './routes.mjs';
+
+import notes from './api/notes/index.mjs';
+import NotesService from './services/inMemory/NotesService.mjs';
 
 const init = async () => {
     const server = Hapi.server({
         port: 3000,
-        host: 'localhost',
+        host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
+        routes: {
+            cors: {
+                origin: ['*'],
+            },
+        },
     });
 
-    server.route(routes);
+    const notesService = new NotesService();
+
+    await server.register({
+        plugin: notes,
+        options: {
+            service: notesService,
+        }
+    });
 
     await server.start();
     console.log(`Server started at ${server.info.uri}`);

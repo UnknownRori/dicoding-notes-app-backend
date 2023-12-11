@@ -1,17 +1,19 @@
 // eslint-disable-next-line no-unused-vars
 import Hapi from '@hapi/hapi';
 
-import { addNoteHandler, deleteNoteByIdHandler, editNoteByIdHandler, getAllNotesHandler, getNoteByIdHandler } from './handler.mjs';
+// eslint-disable-next-line no-unused-vars
+import NotesHandler from './handler.mjs';
 
 /**
  * @type {Hapi.ServerRoute<Hapi.ReqRefDefaults> | Hapi.ServerRoute<Hapi.ReqRefDefaults>[]}
+ * @param {NotesHandler} handler
  * @const
  */
-const routes = [
+const routes = (handler) => [
     {
         method: 'GET',
         path: '/notes',
-        handler: getAllNotesHandler,
+        handler: handler.getNotesHandler,
         options: {
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
@@ -21,7 +23,7 @@ const routes = [
     {
         method: 'GET',
         path: '/notes/{id}',
-        handler: getNoteByIdHandler,
+        handler: handler.getNoteByIdHandler,
         options: {
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
@@ -31,7 +33,7 @@ const routes = [
     {
         method: 'POST',
         path: '/notes',
-        handler: addNoteHandler,
+        handler: handler.addNoteHandler,
         options: {
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
@@ -41,7 +43,7 @@ const routes = [
     {
         method: 'PUT',
         path: '/notes/{id}',
-        handler: editNoteByIdHandler,
+        handler: handler.putNoteByIdHandler,
         options: {
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
@@ -51,7 +53,7 @@ const routes = [
     {
         method: 'DELETE',
         path: '/notes/{id}',
-        handler: deleteNoteByIdHandler,
+        handler: handler.deleteNoteByIdHandler,
         options: {
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
