@@ -15,9 +15,10 @@ export default {
      * @param {Hapi.ServerState} server
      * @param {Object} obj
      * @param {NotesService} obj.service
+     * @param {Object} obj.validator
      */
-    register: async (server, { service }) => {
-        const notesHandler = new NotesHandler(service);
+    register: async (server, { service, validator }) => {
+        const notesHandler = new NotesHandler(service, validator);
         server.route(routes(notesHandler));
     }
 };
