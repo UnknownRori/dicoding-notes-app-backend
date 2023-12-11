@@ -28,7 +28,7 @@ export function addNoteHandler(request, h) {
             status: 'success',
             message: 'Catatan berhasil ditambahkan',
             data: {
-                notesId: id,
+                noteId: id,
             },
         }).code(201);
     }
