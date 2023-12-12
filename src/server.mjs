@@ -2,7 +2,7 @@ import Hapi from '@hapi/hapi';
 import dotenv from 'dotenv';
 
 import notes from './api/notes/index.mjs';
-import NotesService from './services/inMemory/NotesService.mjs';
+import NotesService from './services/postgres/NotesService.mjs';
 import NotesValidator from './validator/notes/index.mjs';
 
 const init = async () => {

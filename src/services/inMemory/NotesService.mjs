@@ -12,7 +12,7 @@ export default class NotesService {
      * @param {Object} param0
      * @param {string} param0.title 
      * @param {string} param0.body 
-     * @param {string} param0.tags 
+     * @param {Array<string>} param0.tags 
      *
      * @returns {string}
      *
