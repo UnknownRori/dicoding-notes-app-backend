@@ -13,6 +13,10 @@ exports.up = pgm => {
             notNull: true,
         },
         body: {
+            type: 'TEXT',
+            notNull: true,
+        },
+        tags: {
             type: 'TEXT[]',
             notNull: true,
         },
