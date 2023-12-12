@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.mjs",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.mjs",
     "dev": "nodemon src/server.mjs",
-    "lint": "eslint ./src/*.mjs"
+    "lint": "eslint ./src/*.mjs",
+    "migrate": "node-pg-migrate"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,10 @@
   },
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
+    "dotenv": "^16.3.1",
     "joi": "^17.11.0",
-    "nanoid": "^5.0.3"
+    "nanoid": "^5.0.3",
+    "node-pg-migrate": "^6.2.2",
+    "pg": "^8.11.3"
   }
 }
