@@ -30,7 +30,7 @@ export default class UsersService {
         return result.rows[0].id;
     }
 
-    async verifyUsername(username) {
+    async verifyNewUsername(username) {
         const query = {
             text: 'SELECT username FROM users WHERE username = $1',
             values: [username],
