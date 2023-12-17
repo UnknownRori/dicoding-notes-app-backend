@@ -40,6 +40,7 @@ const routes = (handler) => [
             cors: {
                 origin: ['http://notesapp-v1.dicodingacademy.com'],
             },
+            auth: 'notesapp_jwt',
         },
     },
     {
