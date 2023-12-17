@@ -15,9 +15,6 @@ const routes = (handler) => [
         path: '/notes',
         handler: handler.getNotesHandler,
         options: {
-            cors: {
-                origin: ['http://notesapp-v1.dicodingacademy.com'],
-            },
             auth: 'notesapp_jwt',
         },
     },
@@ -26,9 +23,6 @@ const routes = (handler) => [
         path: '/notes/{id}',
         handler: handler.getNoteByIdHandler,
         options: {
-            cors: {
-                origin: ['http://notesapp-v1.dicodingacademy.com'],
-            },
             auth: 'notesapp_jwt',
         },
     },
@@ -37,9 +31,6 @@ const routes = (handler) => [
         path: '/notes',
         handler: handler.addNoteHandler,
         options: {
-            cors: {
-                origin: ['http://notesapp-v1.dicodingacademy.com'],
-            },
             auth: 'notesapp_jwt',
         },
     },
@@ -48,9 +39,6 @@ const routes = (handler) => [
         path: '/notes/{id}',
         handler: handler.putNoteByIdHandler,
         options: {
-            cors: {
-                origin: ['http://notesapp-v1.dicodingacademy.com'],
-            },
             auth: 'notesapp_jwt',
         },
     },
@@ -59,9 +47,6 @@ const routes = (handler) => [
         path: '/notes/{id}',
         handler: handler.deleteNoteByIdHandler,
         options: {
-            cors: {
-                origin: ['http://notesapp-v1.dicodingacademy.com'],
-            },
             auth: 'notesapp_jwt',
         },
     },

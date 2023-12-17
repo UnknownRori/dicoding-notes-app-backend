@@ -15,6 +15,10 @@ import AuthenticationsService from './services/postgres/AuthenticationsService.m
 import TokenManager from './tokenize/TokenManager.mjs';
 import AuthenticationsValidator from './validator/authentications/index.mjs';
 
+import collaborations from './api/collaborations/index.mjs';
+import CollaborationsValidator from './validator/collaborations/index.mjs';
+import CollaborationsService from './services/postgres/CollaborationsService.mjs';
+
 const init = async () => {
     dotenv.config();
 
@@ -50,7 +54,8 @@ const init = async () => {
         }),
     });
 
-    const notesService = new NotesService();
+    const collaborationsService = new CollaborationsService();
+    const notesService = new NotesService(collaborationsService);
     const usersService = new UsersService();
     const authenticationsService = new AuthenticationsService();
 
@@ -77,7 +82,15 @@ const init = async () => {
                 tokenManager: TokenManager,
                 validator: AuthenticationsValidator,
             }
-        }
+        },
+        {
+            plugin: collaborations,
+            options: {
+                collaborationsService,
+                notesService,
+                validator: CollaborationsValidator,
+            },
+        },
     ]);
 
     await server.start();
