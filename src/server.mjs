@@ -1,6 +1,10 @@
-import Hapi from '@hapi/hapi';
+import path from 'path';
 import Jwt from '@hapi/jwt';
 import dotenv from 'dotenv';
+import Inert from '@hapi/inert';
+import Hapi from '@hapi/hapi';
+
+import ClientError from './exceptions/ClientError.mjs';
 
 import notes from './api/notes/index.mjs';
 import NotesService from './services/postgres/NotesService.mjs';
@@ -23,6 +27,10 @@ import _export from './api/exports/index.mjs';
 import ProducersService from './services/rabbitmq/ProducerService.mjs';
 import ExportsValidator from './validator/exports/index.mjs';
 
+import uploads from './api/uploads/index.mjs';
+import StorageService from './services/storage/StorageService.mjs';
+import UploadsValidator from './validator/uploads/index.mjs';
+
 const init = async () => {
     dotenv.config();
 
@@ -36,9 +44,39 @@ const init = async () => {
         },
     });
 
+    server.ext('onPreResponse', (request, h) => {
+        const { response } = request;
+
+        if (response instanceof Error) {
+
+            if (response instanceof ClientError) {
+                return h.response({
+                    status: 'fail',
+                    message: response.message,
+                }).code(response.statusCode);
+            }
+
+            if (!response.isServer) {
+                return h.continue;
+            }
+
+            console.log(response.message);
+
+            return h.response({
+                status: 'error',
+                message: 'terjadi kegagalan pada server kami',
+            }).code(500);
+        }
+
+        return h.continue;
+    });
+
     await server.register([
         {
             plugin: Jwt.plugin,
+        },
+        {
+            plugin: Inert.plugin,
         },
     ]);
 
@@ -62,6 +100,7 @@ const init = async () => {
     const notesService = new NotesService(collaborationsService);
     const usersService = new UsersService();
     const authenticationsService = new AuthenticationsService();
+    const storageService = new StorageService(path.resolve(path.dirname('.'), 'src/api/uploads/file/images'));
 
     await server.register([
         {
@@ -101,7 +140,14 @@ const init = async () => {
                 service: ProducersService,
                 validator: ExportsValidator,
             }
-        }
+        },
+        {
+            plugin: uploads,
+            options: {
+                service: storageService,
+                validator: UploadsValidator,
+            },
+        },
     ]);
 
     await server.start();
