@@ -3,7 +3,6 @@ import Hapi from '@hapi/hapi';
 
 // eslint-disable-next-line no-unused-vars
 import NotesService from '../../services/postgres/NotesService.mjs';
-import ClientError from '../../exceptions/ClientError.mjs';
 
 export default class NotesHandler {
     /**
@@ -27,36 +26,20 @@ export default class NotesHandler {
      * @returns {Hapi.ResponseValue}
      */
     async addNoteHandler(request, h) {
-        try {
-            this._validator.validateNotePayload(request.payload);
+        this._validator.validateNotePayload(request.payload);
 
-            const { title = 'untitled', body, tags } = request.payload;
-            const { id: credentialId } = request.auth.credentials;
+        const { title = 'untitled', body, tags } = request.payload;
+        const { id: credentialId } = request.auth.credentials;
 
-            const noteId = await this._service.addNote({ title, body, tags, owner: credentialId });
+        const noteId = await this._service.addNote({ title, body, tags, owner: credentialId });
 
-            return h.response({
-                status: 'success',
-                message: 'Catatan berhasil ditambahkan',
-                data: {
-                    noteId,
-                },
-            }).code(201);
-        } catch (error) {
-            if (error instanceof ClientError) {
-                return h.response({
-                    status: 'fail',
-                    message: error.message,
-                }).code(error.statusCode);
-            }
-
-            // Server ERROR!
-            console.error(error);
-            return h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            }).code(500);
-        }
+        return h.response({
+            status: 'success',
+            message: 'Catatan berhasil ditambahkan',
+            data: {
+                noteId,
+            },
+        }).code(201);
     }
 
     /**
@@ -65,16 +48,16 @@ export default class NotesHandler {
      *
      * @returns {Hapi.ResponseValue}
      */
-    async getNotesHandler(request) {
+    async getNotesHandler(request, h) {
         const { id: credentialId } = request.auth.credentials;
         const notes = await this._service.getNotes(credentialId);
 
-        return {
+        return h.response({
             status: 'success',
             data: {
                 notes,
             },
-        };
+        });
     }
 
     /**
@@ -84,34 +67,18 @@ export default class NotesHandler {
      * @returns {Hapi.ResponseValue}
      */
     async getNoteByIdHandler(request, h) {
-        try {
-            const { id } = request.params;
-            const { id: credentialId } = request.auth.credentials;
+        const { id } = request.params;
+        const { id: credentialId } = request.auth.credentials;
 
-            await this._service.verifyNoteAccess(id, credentialId);
-            const note = await this._service.getNoteById(id, credentialId);
+        await this._service.verifyNoteAccess(id, credentialId);
+        const note = await this._service.getNoteById(id, credentialId);
 
-            return {
-                status: 'success',
-                data: {
-                    note,
-                },
-            };
-        } catch (error) {
-            if (error instanceof ClientError) {
-                return h.response({
-                    status: 'fail',
-                    message: error.message,
-                }).code(error.statusCode);
-            }
-
-            // Server ERROR!
-            console.error(error);
-            return h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            }).code(500);
-        }
+        return h.response({
+            status: 'success',
+            data: {
+                note,
+            },
+        });
     }
 
     /**
@@ -121,33 +88,17 @@ export default class NotesHandler {
      * @returns {Hapi.ResponseValue}
      */
     async putNoteByIdHandler(request, h) {
-        try {
-            this._validator.validateNotePayload(request.payload);
+        this._validator.validateNotePayload(request.payload);
 
-            const { id } = request.params;
-            const { id: credentialId } = request.auth.credentials;
-            await this._service.verifyNoteAccess(id, credentialId);
-            await this._service.editNoteById(id, request.payload);
+        const { id } = request.params;
+        const { id: credentialId } = request.auth.credentials;
+        await this._service.verifyNoteAccess(id, credentialId);
+        await this._service.editNoteById(id, request.payload);
 
-            return {
-                status: 'success',
-                message: 'Catatan berhasil diperbarui',
-            };
-        } catch (error) {
-            if (error instanceof ClientError) {
-                return h.response({
-                    status: 'fail',
-                    message: error.message,
-                }).code(error.statusCode);
-            }
-
-            // Server ERROR!
-            console.error(error);
-            return h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            }).code(500);
-        }
+        return h.response({
+            status: 'success',
+            message: 'Catatan berhasil diperbarui',
+        });
     }
 
     /**
@@ -157,30 +108,14 @@ export default class NotesHandler {
      * @returns {Hapi.ResponseValue}
      */
     async deleteNoteByIdHandler(request, h) {
-        try {
-            const { id } = request.params;
-            const { id: credentialId } = request.auth.credentials;
-            await this._service.verifyNoteOwner(id, credentialId);
-            await this._service.deleteNoteById(id);
+        const { id } = request.params;
+        const { id: credentialId } = request.auth.credentials;
+        await this._service.verifyNoteOwner(id, credentialId);
+        await this._service.deleteNoteById(id);
 
-            return {
-                status: 'success',
-                message: 'Catatan berhasil dihapus',
-            };
-        } catch (error) {
-            if (error instanceof ClientError) {
-                return h.response({
-                    status: 'fail',
-                    message: error.message,
-                }).code(error.statusCode);
-            }
-
-            // Server ERROR!
-            console.error(error);
-            return h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            }).code(500);
-        }
+        return h.response({
+            status: 'success',
+            message: 'Catatan berhasil dihapus',
+        });
     }
 }
