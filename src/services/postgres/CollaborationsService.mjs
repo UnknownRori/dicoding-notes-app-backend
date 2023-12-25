@@ -4,8 +4,9 @@ import { nanoid } from 'nanoid';
 import InvariantError from '../../exceptions/InvariantError.mjs';
 
 export default class CollaborationsService {
-    constructor() {
+    constructor(cacheService) {
         this._pool = new pg.Pool();
+        this._cacheService = cacheService;
     }
 
     async addCollaboration(noteId, userId) {
@@ -20,6 +21,8 @@ export default class CollaborationsService {
         if (!result.rows.length) {
             throw new InvariantError('Kolaborasi gagal ditambahkan');
         }
+
+        await this._cacheService.delete(`notes:${userId}`);
         return result.rows[0].id;
     }
 
@@ -34,6 +37,8 @@ export default class CollaborationsService {
         if (!result.rows.length) {
             throw new InvariantError('Kolaborasi gagal dihapus');
         }
+
+        await this._cacheService.delete(`notes:${userId}`);
     }
 
     async verifyCollaborator(noteId, userId) {

@@ -31,6 +31,8 @@ import uploads from './api/uploads/index.mjs';
 import StorageService from './services/storage/StorageService.mjs';
 import UploadsValidator from './validator/uploads/index.mjs';
 
+import CacheService from './services/redis/CacheService.mjs';
+
 const init = async () => {
     dotenv.config();
 
@@ -96,8 +98,9 @@ const init = async () => {
         }),
     });
 
-    const collaborationsService = new CollaborationsService();
-    const notesService = new NotesService(collaborationsService);
+    const cacheService = new CacheService();
+    const collaborationsService = new CollaborationsService(cacheService);
+    const notesService = new NotesService(collaborationsService, cacheService);
     const usersService = new UsersService();
     const authenticationsService = new AuthenticationsService();
     const storageService = new StorageService(path.resolve(path.dirname('.'), 'src/api/uploads/file/images'));
